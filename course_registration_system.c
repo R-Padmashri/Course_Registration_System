@@ -214,7 +214,7 @@ int Login(FILE *file, int x){
                 scanf("%d",&forgot);
                 if (forgot==1){
                     j--;
-                    file=fopen("login.csv", "w");
+                    file=fopen("database\\login.csv", "w");
                     if (file==NULL){
                         printf("Error opening file.\n");
                         return 1;
@@ -316,7 +316,7 @@ int display_profile(int student_id, char *cgpa){
     int is_header=1;
 
     // Open the student CSV file for reading
-    file=fopen("student.csv", "r");
+    file=fopen("database\\students\\student.csv", "r");
     if (file==NULL){
         printf("Error opening file.\n");
         return -1;
@@ -408,7 +408,7 @@ int has_attended_course(int student_id, const char *course_id){
     int is_header=1;
     int field_count;
     // Open the courses attended CSV file for reading
-    file=fopen("courses_attended.csv", "r");
+    file=fopen("database\\students\\courses_attended.csv", "r");
     if (file==NULL){
         printf("Error opening file.\n");
         return 0;
@@ -441,7 +441,7 @@ int has_attended_course(int student_id, const char *course_id){
 
 //Functiont to calculate course popularity
 void calculate_course_popularity(Course core_courses[], int *num_core_courses, Course elective_courses[], int *num_elective_courses){
-    FILE *file=fopen("courses_recommended.csv", "r");
+    FILE *file=fopen("database\\courses\\courses_recommended.csv", "r");
     if (file==NULL){
         printf("Error opening file.\n");
         return;
@@ -544,7 +544,7 @@ void display_courses(int student_id, char *cgpa,int core[],int elective[],int se
     int is_header=1;
     int prerequisite=0,i=0,j=0;
     // Open the courses CSV file for reading
-    file=fopen("courses.csv", "r");
+    file=fopen("database\\courses\\courses.csv", "r");
     if (file==NULL){
         printf("Error opening file.\n");
         return;
@@ -679,7 +679,7 @@ void course_selection(Student *student,int sem, char cgpa[]){
 //Function for course selection module
 int course_selection_student(int student_id,int sem,char cgpa[]){
     char filename[30];
-    sprintf(filename, "courses_selected_sem%d.csv", sem);
+    sprintf(filename, "database\\students\\courses_selected_sem%d.csv", sem);
     Student students[100];
     int student_count;
     if (!read_data(filename, students, &student_count)){
@@ -795,7 +795,7 @@ void add_course(Student students[], int student_count, int student_id, int cours
 //Function for add courses module
 int add_course_student(int student_id, int sem){
     char filename[30];
-    sprintf(filename, "courses_selected_sem%d.csv", sem);
+    sprintf(filename, "database\\students\\courses_selected_sem%d.csv", sem);
     Student students[100];
     int student_count;
     if (!read_data(filename, students, &student_count)) 
@@ -828,7 +828,7 @@ int add_course_student(int student_id, int sem){
 int drop_course_student(int student_id, int sem){
     int course_id;
     char filename[30];
-    sprintf(filename, "courses_selected_sem%d.csv", sem);
+    sprintf(filename, "database\\students\\courses_selected_sem%d.csv", sem);
     Student students[100];
     int student_count;
 
@@ -852,13 +852,13 @@ int drop_course_student(int student_id, int sem){
         return 1;
 
     char line[MAX_LINE_LENGTH];
-    FILE *file=fopen("allotments.csv", "r");
+    FILE *file=fopen("database\\courses\\allotments.csv", "r");
     if (file==NULL){
         printf("Error opening file.\n");
         return -1;
     }
 
-    FILE *temp=fopen("temp.csv", "w");
+    FILE *temp=fopen("database\\courses\\temp.csv", "w");
     if (temp==NULL){
         printf("Error opening temporary file.\n");
         fclose(file);
@@ -899,11 +899,11 @@ int drop_course_student(int student_id, int sem){
     fclose(file);
 
     if (flag){
-        remove("allotments.csv");
-        rename("temp.csv", "allotments.csv");
+        remove("database\\courses\\allotments.csv");
+        rename("database\\courses\\temp.csv", "database\\courses\\allotments.csv");
         printf("Course dropped successfully!\n");
     } else {
-        remove("temp.csv");
+        remove("database\\courses\\temp.csv");
         printf("Course not found!\n");
     }
 
@@ -914,7 +914,7 @@ int drop_course_student(int student_id, int sem){
 
 //Function to check if faculty id is already saved
 int find_student_course(int student_id, int course_id) {
-    FILE *file = fopen("fstatus.csv", "r");
+    FILE *file = fopen("database\\admin\\fstatus.csv", "r");
     int found=0;
     if (file == NULL) {
         perror("Error opening file for reading");
@@ -935,7 +935,7 @@ int find_student_course(int student_id, int course_id) {
 
 //Function save faculty allotments 
 void save(int student_id, int course_id, int status, int fid) {
-    FILE *file = fopen("fstatus.csv", "a");
+    FILE *file = fopen("database\\admin\\fstatus.csv", "a");
     if (file == NULL) {
         perror("Error opening file for writing");
         exit(EXIT_FAILURE);
@@ -978,13 +978,13 @@ int drop_course_admin(){
     char line[MAX_LINE_LENGTH];
     char *fields[MAX_FIELDS];
 
-    FILE *file=fopen("courses.csv", "r");
+    FILE *file=fopen("database\\courses\\courses.csv", "r");
     if (file==NULL){
         printf("Error opening file.\n");
         return -1;
     }
 
-    FILE *temp=fopen("temp.csv", "w");
+    FILE *temp=fopen("database\\courses\\temp.csv", "w");
     if (temp==NULL){
         printf("Error opening temporary file.\n");
         fclose(file);
@@ -1018,11 +1018,11 @@ int drop_course_admin(){
     fclose(file);
 
     if (flag){
-        remove("courses.csv");
-        rename("temp.csv", "courses.csv");
+        remove("database\\courses\\courses.csv");
+        rename("database\\courses\\temp.csv", "database\\courses\\courses.csv");
         printf("Course dropped Successfully!\n");
     } else {
-        remove("temp.csv");
+        remove("database\\courses\\temp.csv");
         printf("Course not found!\n");
     }
 
@@ -1045,7 +1045,7 @@ int add_course_admin(){
     scanf("%c", &type);
     getchar();
 
-    FILE *file=fopen("courses.csv", "r");
+    FILE *file=fopen("database\\courses\\courses.csv", "r");
     if (!file){
         perror("Could not open file");
         return 1;
@@ -1073,7 +1073,7 @@ int add_course_admin(){
 
     id=drop_course_admin();
 
-    file=fopen("courses.csv", "a");
+    file=fopen("database\\courses\\courses.csv", "a");
     if (!file){
         perror("Could not open file");
         return 1;
@@ -1381,7 +1381,7 @@ void performSeatAllocation(int max_courses, const char *stu_pref_file, const cha
 
     // Write nrmp array to output CSV file
     writeCSV(output_file, nrmp, NRMP_ROWS, NRMP_COLS);
-    const char *output_final_file="allotments.csv";
+    const char *output_final_file="database\\courses\\allotments.csv";
     read_elec_allotment_data(output_file);
     append_allotments_to_csv_nrmp(output_final_file);
     // Free allocated memory
@@ -1413,14 +1413,14 @@ int find_course_index(Courses courses[], int course_count, int course_id){
 
 //Function to update the vacancy details for a given course
 void update_vacancy_file(int course_id, int seats_remaining){
-    FILE *file=fopen("vacancy.csv", "r+");
+    FILE *file=fopen("database\\admin\\vacancy.csv", "r+");
     if (!file){
         perror("Unable to open vacancy.csv");
         return;
     }
 
     char line[MAX_LINE_LENGTH];
-    char temp_filename[]="temp_vacancy.csv";
+    char temp_filename[]="database\\admin\\temp_vacancy.csv";
     FILE *temp_file=fopen(temp_filename, "w");
     if (!temp_file){
         perror("Unable to open temporary file");
@@ -1442,8 +1442,8 @@ void update_vacancy_file(int course_id, int seats_remaining){
     fclose(file);
     fclose(temp_file);
 
-    remove("vacancy.csv");
-    rename(temp_filename, "vacancy.csv");
+    remove("database\\admin\\vacancy.csv");
+    rename(temp_filename, "database\\admin\\vacancy.csv");
 }
 
 //Function to read allotments file
@@ -1569,7 +1569,7 @@ void faculty_choice(const char *course_id){
     int field_count, found=0, available=0;
 
     // Open the faculty CSV file for reading
-    file=fopen("faculty.csv", "r");
+    file=fopen("database\\admin\\faculty.csv", "r");
     if (file==NULL){
         printf("Error opening file.\n");
         return;
@@ -1618,7 +1618,7 @@ char* fallot(const char *course_id, const char *faculty_id, int *seats, char *fa
     strcpy(final_id, " ");
 
     // Open the faculty CSV file for reading
-    file=fopen("faculty.csv", "r");
+    file=fopen("database\\admin\\faculty.csv", "r");
     if (file==NULL){
         printf("Error opening file.\n");
         return NULL;
@@ -1741,7 +1741,7 @@ void handle_faculty_selection(int course_id,int sid){
             int fid=atoi(final_faculty_id);
             save(sid,course_id,1,fid);
             sprintf(new_seats, "%d", seats);
-            update_faculty("faculty.csv", final_faculty_id, cid, new_seats);
+            update_faculty("database\\admin\\faculty.csv", final_faculty_id, cid, new_seats);
             free(final_faculty_id);
             break;
         } else {
@@ -1785,7 +1785,7 @@ void allot_seats(int id, int course_id, Student students[], int num_students) {
             // Handle faculty selection for core courses
             for (int j = 0; j < students[i].num_core; j++) {
                 if (students[i].core[j] == course_id) {
-                    int m = check_allotment_status(students[i].student_id, course_id,"fstatus.csv");
+                    int m = check_allotment_status(students[i].student_id, course_id,"database\\admin\\fstatus.csv");
                     if (m != 1) {
                         int sid = students[i].student_id;
                         handle_faculty_selection(course_id, sid);
@@ -1799,7 +1799,7 @@ void allot_seats(int id, int course_id, Student students[], int num_students) {
             // Handle faculty selection for elective courses
             for (int j = 0; j < students[i].num_elective; j++) {
                 if (students[i].elective[j] == course_id) {
-                    int m = check_allotment_status(students[i].student_id, course_id,"fstatus.csv");
+                    int m = check_allotment_status(students[i].student_id, course_id,"database\\admin\\fstatus.csv");
                     if (m != 1) {
                         int sid = students[i].student_id;
                         handle_faculty_selection(course_id, sid);
@@ -1816,13 +1816,13 @@ void allot_seats(int id, int course_id, Student students[], int num_students) {
 //Function for seat allotment module
 void seat_allotment(int student_id, int sem){
     char filename[30];
-    sprintf(filename, "courses_selected_sem%d.csv", sem);
+    sprintf(filename, "database\\students\\courses_selected_sem%d.csv", sem);
     Student students[100];
     int num_students, student_not_found;
     
     read_data(filename, students, &num_students);
 
-    read_allotments_from_csv("allotments.csv", allotments, &allotment_count);
+    read_allotments_from_csv("database\\courses\\allotments.csv", allotments, &allotment_count);
 
     printf("Allotment status for student ID %d:\n", student_id);
 
@@ -1863,21 +1863,21 @@ int courses_selected_admin(int sem){
     const char *filename;
 
     if (sem==2){
-        filename="courses_selected_sem2.csv";
+        filename="database\\students\\courses_selected_sem2.csv";
         core_start=201;
         core_end=204;
         elective_start=205;
         elective_end=206;
         flag=2;
     } else if (sem==4){
-        filename="courses_selected_sem4.csv";
+        filename="database\\students\\courses_selected_sem4.csv";
         core_start=401;
         core_end=404;
         elective_start=405;
         elective_end=406;
         flag=4;
     } else if (sem==6){
-        filename="courses_selected_sem6.csv";
+        filename="database\\students\\courses_selected_sem6.csv";
         core_start=601;
         core_end=604;
         elective_start=605;
@@ -1932,9 +1932,9 @@ int courses_selected_admin(int sem){
             if (courses[index].student_count<=60){
                 printf("Procceeding with normal allotment\n");
                 printf("---------------------------\n");
-                read_allotments_from_csv_normal("allotments.csv");
+                read_allotments_from_csv_normal("database\\courses\\allotments.csv");
                 course_allotment(courses[index].course_id, courses[index].student_ids, courses[index].student_count);
-                update_allotments_to_csv("allotments.csv");
+                update_allotments_to_csv("database\\courses\\allotments.csv");
                 // Calculate remaining seats and update vacancy file if needed
                 int seats_remaining=60-courses[index].student_count;
                 update_vacancy_file(courses[index].course_id, seats_remaining);
@@ -1943,9 +1943,9 @@ int courses_selected_admin(int sem){
                 printf("Procceeding with waitlist allotment\n");
                 printf("---------------------------\n");
                 char student_preference[50], university_preference[50], allotment[50];
-                sprintf(student_preference, "stud_core_pref_sem%d.csv", flag);    
-                sprintf(university_preference, "uni_core_pref_sem%d.csv", flag);  
-                sprintf(allotment, "core_allotment_sem%d.csv", flag);             
+                sprintf(student_preference, "database\\students\\stud_core_pref_sem%d.csv", flag);    
+                sprintf(university_preference, "database\\admin\\uni_core_pref_sem%d.csv", flag);  
+                sprintf(allotment, "database\\courses\\core_allotment_sem%d.csv", flag);             
                 performSeatAllocation(MAX_CORE_COURSE, student_preference, university_preference, allotment);
             }
         }
@@ -1959,9 +1959,9 @@ int courses_selected_admin(int sem){
             if (courses[index].student_count<=60){
                 printf("Procceeding with normal allotment\n");
                 printf("---------------------------\n");
-                read_allotments_from_csv_normal("allotments.csv");
+                read_allotments_from_csv_normal("database\\courses\\allotments.csv");
                 course_allotment(courses[index].course_id, courses[index].student_ids, courses[index].student_count);
-                update_allotments_to_csv("allotments.csv");
+                update_allotments_to_csv("database\\courses\\allotments.csv");
                 // Calculate remaining seats and update vacancy file if needed
                 int seats_remaining=60-courses[index].student_count;
                 update_vacancy_file(courses[index].course_id, seats_remaining);
@@ -1970,9 +1970,9 @@ int courses_selected_admin(int sem){
                 printf("Procceeding with waitlist allotment\n");
                 printf("---------------------------\n");
                 char student_preference[50], university_preference[50], allotment[50];
-                sprintf(student_preference, "stud_elec_pref_sem%d.csv", flag);    
-                sprintf(university_preference, "uni_elec_pref_sem%d.csv", flag);  
-                sprintf(allotment, "elec_allotment_sem%d.csv", flag);             
+                sprintf(student_preference, "database\\students\\stud_elec_pref_sem%d.csv", flag);    
+                sprintf(university_preference, "database\\admin\\uni_elec_pref_sem%d.csv", flag);  
+                sprintf(allotment, "database\\courses\\elec_allotment_sem%d.csv", flag);             
                 performSeatAllocation(MAX_CORE_COURSE, student_preference, university_preference, allotment);
             }
         }
@@ -1983,8 +1983,8 @@ int courses_selected_admin(int sem){
 
 //MAIN
 int main(){
-    FILE *stud_file=fopen("login.csv","r");
-    FILE *admin_file=fopen("admin.csv","r");
+    FILE *stud_file=fopen("database\\login.csv","r");
+    FILE *admin_file=fopen("database\\admin\\admin.csv","r");
     int status, ch, id, n, ch2;
     printf("\n**************************************************\n\nWELCOME TO UNIVERSITY COURSE REGISTRATION SYSTEM\n\n**************************************************\n\n");
     printf("**************\nLOGIN\n**************");
